@@ -5,29 +5,29 @@ A local data engineering portfolio prototype that simulates grocery operations, 
 ## Architecture
 
 ```text
-                 ┌──────────────────┐
-                 │ Event Simulator  │
-                 └────────┬─────────┘
-                          ▼
-                    ┌───────────┐
-                    │   Kafka   │
-                    └─────┬─────┘
-                          ▼
-                ┌──────────────────┐
-                │ Stream Processor │
-                └────────┬─────────┘
-                         ▼
-                 ┌──────────────┐
-                 │  ClickHouse  │
-                 └──────┬───────┘
-                   ┌────┴────┐
-                   ▼         ▼
-                  ML     Mock AI
-                   └────┬────┘
-                        ▼
-                   ┌──────────┐
-                   │ FastAPI  │ → dashboard
-                   └──────────┘
+  ┌─────────────┐    ┌──────────────────┐
+  │ Weather API │───▶│ Event Simulator  │
+  └─────────────┘    └────────┬─────────┘
+                              ▼
+                        ┌───────────┐
+                        │   Kafka   │
+                        └─────┬─────┘
+                              ▼
+                    ┌──────────────────┐
+                    │ Stream Processor │
+                    └────────┬─────────┘
+                             ▼
+                     ┌──────────────┐
+                     │  ClickHouse  │
+                     └──────┬───────┘
+                       ┌────┴────┐
+                       ▼         ▼
+                      ML     Gemini AI
+                       └────┬────┘
+                            ▼
+                       ┌──────────┐
+                       │ FastAPI  │ → dashboard
+                       └──────────┘
 ```
 
 The data path is Simulator → Kafka → Python stream processor → ClickHouse → ML/API/dashboard. The dashboard polls live API aggregates every 15 seconds and includes a prompt-driven analyst: user questions are answered from bounded, read-only ClickHouse context rather than translated into executable SQL. Current OpenWeather conditions are collected for eight German cities every 15 minutes and kept distinct from synthetic event data. Current identifiers use readable catalog names such as `koelnNord1`, `essen05`, `wholeMilk_1l`, and `rheinlandDairy`; older persisted IDs are translated to these labels at the API layer. Stack: Python 3.12, Kafka KRaft, ClickHouse, FastAPI, Pydantic, pandas, NumPy, scikit-learn, Docker Compose.
@@ -57,7 +57,7 @@ curl -X POST http://localhost:8000/analyze \
   -d '{"prompt":"Which suppliers have the highest delay rate, and what should we do?"}'
 ```
 
-`AI_PROVIDER=mock` works with no credentials and returns relevant live metrics. To enable synthesis from an OpenAI-compatible model, set `AI_PROVIDER=groq` or `AI_PROVIDER=openai`, add `AI_API_KEY` (or `GROQ_API_KEY` / `OPENAI_API_KEY`), and optionally set `AI_BASE_URL` and `AI_MODEL` in `.env`. Then rebuild with `docker compose up --build`. The model receives only bounded analytical results and has no SQL execution tool. Questions are limited to 2,000 characters. The local `.env` is git-ignored; never commit provider keys.
+`AI_PROVIDER=gemini` works with Google Gemini. To enable synthesis from Gemini AI, set `AI_PROVIDER=gemini`, add `GEMINI_API_KEY` in `.env`. Then rebuild with `docker compose up --build`. The model receives only bounded analytical results and has no SQL execution tool. Questions are limited to 2,000 characters. The local `.env` is git-ignored; never commit provider keys.
 
 To enable current weather ingestion, set `OPENWEATHER_API_KEY` in `.env`; the simulator queries OpenWeather by the coordinates in the German city catalog, uses Celsius (`units=metric`), and publishes `weather` Kafka events into `fact_weather`. `GET /metrics/weather` shows observed city conditions with source and observation time. `WEATHER_POLL_SECONDS` controls refresh cadence (minimum 300 seconds). Weather API unavailability does not stop synthetic event generation. OpenWeather's terms/data freshness and account limits apply.
 
@@ -68,7 +68,7 @@ curl http://localhost:8000/intelligence
 
 ## ML and AI
 
-Lag/rolling feature functions and a RandomForestRegressor baseline are reusable; the scheduled worker uses a rolling demand baseline plus IsolationForest anomaly scores and persists results. MockAIProvider converts structured rule alerts into explanations and actions; prompt analysis can use live ClickHouse context with the mock provider or an optional OpenAI-compatible provider. See [docs/ml.md](docs/ml.md).
+Lag/rolling feature functions and a RandomForestRegressor baseline are reusable; the scheduled worker uses a rolling demand baseline plus IsolationForest anomaly scores and persists results. Gemini AI converts structured rule alerts into explanations and actions; prompt analysis can use live ClickHouse context with Gemini AI. See [docs/ml.md](docs/ml.md).
 
 ## Tests and maintenance
 
