@@ -37,6 +37,9 @@ The data path is Simulator → Kafka → Python stream processor → ClickHouse 
 ```bash
 cp .env.example .env  # optional; defaults work without a .env file
 docker compose up --build
+
+```markdown
+> **⚠️ AI Setup Reminder:** To enable synthesis from Gemini AI via the `/analyze` endpoint, ensure `AI_PROVIDER=gemini` and `GEMINI_API_KEY` are set in your `.env` file before running `docker compose up --build`. The local `.env` is git-ignored; never commit provider keys.
 ```
 
 Open dashboard at [http://localhost:8000](http://localhost:8000), Swagger at [http://localhost:8000/docs](http://localhost:8000/docs), Kafka UI at [http://localhost:8081](http://localhost:8081), and ClickHouse HTTP at port 8123. No local Python, manual topic creation, or database setup is needed. For a fresh reset use `docker compose down -v` (removes local data).
