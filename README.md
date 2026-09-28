@@ -38,7 +38,7 @@ The data path is Simulator → Kafka → Python stream processor → ClickHouse 
 cp .env.example .env  # optional; defaults work without a .env file
 docker compose up --build
 
-```markdown
+```
 > **⚠️ AI Setup Reminder:** To enable synthesis from Gemini AI via the `/analyze` endpoint, ensure `AI_PROVIDER=gemini` and `GEMINI_API_KEY` are set in your `.env` file before running `docker compose up --build`. The local `.env` is git-ignored; never commit provider keys.
 ```
 
