@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grocery Supply Intelligence Dashboard</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1>Supply Chain Intelligence <span>· Real-Time Dashboard</span></h1>
+      <span id="status">Connecting to Data Platform...</span>
+    </div>
+  </header>
+  <main>
+    <section class="copilot">
+      <div class="eyebrow">AI-Driven Analytics</div>
+      <h2>Ask your supply chain</h2>
+      <p>Interact with your real-time data using plain language. Powered by Gemini and ClickHouse.</p>
+      <div class="promptbox">
+        <textarea id="prompt" rows="2" placeholder="e.g., Which suppliers have the highest delay rate, and what should we do?"></textarea>
+        <button id="ask" onclick="askCopilot()">Analyze →</button>
+      </div>
+      <div class="examples">
+        <button onclick="example('Which products have the highest demand this week?')">Top demand</button>
+        <button onclick="example('Which stores are at risk of a stockout?')">Stockout risks</button>
+        <button onclick="example('Which suppliers are delayed and have a low fill rate?')">Supplier delays</button>
+      </div>
+      <div id="promptState" aria-live="polite"></div>
+      <pre id="promptAnswer" hidden></pre>
+    </section>
+    
+    <section class="cards" id="cards">
+    </section>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <section>
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Operations · Last 7 Days</div>
+            <h2>Availability, service & waste</h2>
+          </div>
+          <span class="source-tag">Synthetic metrics</span>
+        </div>
+        <div class="cards" id="realismCards" style="grid-template-columns: repeat(2, 1fr);"></div>
+        <p id="forecastAccuracy" class="source-tag" style="margin-top: 1rem;"></p>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Live Alerts</div>
+            <h2>Recent issues</h2>
+          </div>
+        </div>
+        <div id="alerts"></div>
+      </section>
+    </div>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Live Data</div>
+          <h2>Demand · last 7 days</h2>
+        </div>
+        <span class="source-tag">Kafka → ClickHouse (15s refresh)</span>
+      </div>
+      <div id="demand">
+        <svg id="demandChart" viewBox="0 0 800 220" role="img" preserveAspectRatio="none"></svg>
+        <div id="demandEmpty" hidden>Waiting for demand observations...</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">External Context</div>
+          <h2>Weather across regions</h2>
+        </div>
+        <span class="source-tag">OpenWeather API</span>
+      </div>
+      <div class="weather-grid" id="weather"></div>
+    </section>
+
+    <section>
+      <h2>System Intelligence Summary</h2>
+      <div id="intelligence"></div>
+    </section>
+
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>
