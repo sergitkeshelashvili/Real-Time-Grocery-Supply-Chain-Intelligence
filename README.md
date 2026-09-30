@@ -2,6 +2,10 @@
 
 A local data engineering portfolio prototype that simulates grocery operations, streams typed events through Kafka, writes raw and analytical facts to ClickHouse, runs demand/anomaly analysis, and serves KPIs and explainable alerts through FastAPI.
 
+## 🎥 Project Demo
+
+Watch the project demo: https://youtu.be/7FCTeecfUaU
+
 ## Architecture
 
 ```text
